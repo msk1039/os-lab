@@ -1,0 +1,17 @@
+/*
+Problem Statement (Chit 19):
+Implement the C/C++ program in which the main function accepts the integers to be sorted. Main function uses the FORK system call to create a new process called a child process. Parent process sorts the integers using a sorting algorithm and waits for the child process using WAIT system call to sort the integers using any sorting algorithm. Also demonstrate zombie and orphan states. . Use basic programming constructs only; do not use advanced inbuilt library functions
+*/
+
+/*
+============================================================
+Repeated Chit: Fork, Wait, Zombie, and Orphan
+------------------------------------------------------------
+This problem statement is the same as chit 02.
+The implementation is included from chit02_fork_sort_processes.c so both files
+compile and run the same logically correct program.
+============================================================
+*/
+
+#include "chit02_fork_sort_processes.c"
+

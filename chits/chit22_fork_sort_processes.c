@@ -12,5 +12,5 @@ The implementation is included from chit02_fork_sort_processes.c.
 ============================================================
 */
 
+/* Include reference implementation for the duplicated fork/wait statement. */
 #include "chit02_fork_sort_processes.c"
-

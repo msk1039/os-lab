@@ -33,7 +33,9 @@ Detailed example:
 #define ITEMS 10
 
 int buffer[SIZE], in = 0, out = 0;
+/* `empty` counts available free slots; `full` counts produced items. */
 sem_t empty, full;
+/* Mutex serializes updates to shared buffer indices and elements. */
 pthread_mutex_t mutex;
 
 void *producer(void *arg) {
@@ -53,8 +55,11 @@ void *producer(void *arg) {
         */
         pthread_mutex_lock(&mutex);
 
+        /* Place next produced item at current write position. */
         buffer[in] = i;
         printf("Produced %d at index %d\n", i, in);
+
+        /* Move write index in circular manner. */
         in = (in + 1) % SIZE;
 
         /*
@@ -78,9 +83,14 @@ void *producer(void *arg) {
 
 void *consumer(void *arg) {
     for (int i = 1; i <= ITEMS; i++) {
+        /*
+        Wait for at least one produced item before trying to consume.
+        This prevents reading from an empty buffer in normal semaphore flow.
+        */
         sem_wait(&full);
         pthread_mutex_lock(&mutex);
 
+        /* Read item from current consume position and move index forward. */
         int item = buffer[out];
         printf("Consumed %d from index %d\n", item, out);
         out = (out + 1) % SIZE;
@@ -116,6 +126,7 @@ int main(void) {
     - starts a new thread
     - returns 0 on success, non-zero on error
     */
+    /* Start one producer and one consumer thread. */
     pthread_create(&p, NULL, producer, NULL);
     pthread_create(&c, NULL, consumer, NULL);
 
@@ -138,4 +149,3 @@ int main(void) {
 
     return 0;
 }
-

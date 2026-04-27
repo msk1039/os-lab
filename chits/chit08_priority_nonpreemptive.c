@@ -24,6 +24,7 @@ Detailed example:
 #define MAX 30
 
 int main(void) {
+    /* Arrays are process-indexed; done[] avoids selecting finished processes. */
     int n, at[MAX], bt[MAX], pr[MAX], st[MAX], ct[MAX], wt[MAX], tat[MAX], done[MAX] = {0};
     int time = 0, completed = 0;
 
@@ -35,9 +36,11 @@ int main(void) {
         scanf("%d%d%d", &at[i], &bt[i], &pr[i]);
     }
 
+    /* Main scheduling loop: choose one process each cycle. */
     while (completed < n) {
         int p = -1, best = 999999;
 
+        /* Pick arrived process with minimum priority value (highest priority). */
         for (int i = 0; i < n; i++) {
             if (!done[i] && at[i] <= time && pr[i] < best) {
                 best = pr[i];
@@ -45,11 +48,13 @@ int main(void) {
             }
         }
 
+        /* CPU idle path: no eligible process at current time. */
         if (p == -1) {
             time++;
             continue;
         }
 
+        /* Non-preemptive run: process executes full burst in one go. */
         st[p] = time;
         ct[p] = time + bt[p];
         tat[p] = ct[p] - at[p];
@@ -66,4 +71,3 @@ int main(void) {
 
     return 0;
 }
-

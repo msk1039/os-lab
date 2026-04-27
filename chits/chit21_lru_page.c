@@ -13,5 +13,5 @@ and run the same input-driven LRU page replacement program.
 ============================================================
 */
 
+/* Wrapper include keeps repeated LRU problem bound to one maintained source. */
 #include "chit10_lru_page.c"
-

@@ -12,5 +12,5 @@ The implementation is included from chit09_producer_consumer.c.
 ============================================================
 */
 
+/* Include reference implementation for repeated producer-consumer statement. */
 #include "chit09_producer_consumer.c"
-

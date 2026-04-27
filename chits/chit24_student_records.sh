@@ -12,5 +12,6 @@
 ###############################################################################
 
 DIR="$(cd "$(dirname "$0")" && pwd)"
+# `exec` replaces the current shell with the target script process.
+# This avoids running two nested shell loops.
 exec "$DIR/chit01_student_records.sh"
-

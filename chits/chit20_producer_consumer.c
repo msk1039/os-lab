@@ -13,5 +13,5 @@ compile and run the same program with the same thread/semaphore comments.
 ============================================================
 */
 
+/* Wrapper include keeps this repeated chit synced with chit09 source code. */
 #include "chit09_producer_consumer.c"
-

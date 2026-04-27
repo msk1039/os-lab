@@ -27,6 +27,7 @@ int absVal(int x) {
 }
 
 int main(void) {
+    /* q[] stores request queue exactly in user-entered order. */
     int n, head, current, q[MAX], total = 0;
 
     printf("Enter number of requests (at least 15): ");
@@ -41,8 +42,10 @@ int main(void) {
     printf("Enter initial head position: ");
     scanf("%d", &head);
 
+    /* Head begins at initial position provided by user. */
     current = head;
     printf("\nCurrent\tNext\tSeek\n");
+    /* FCFS: serve requests in strict queue order. */
     for (int i = 0; i < n; i++) {
         int seek = absVal(q[i] - current);
         total += seek;
@@ -54,4 +57,3 @@ int main(void) {
     printf("Average seek       : %.2f\n", (float)total / n);
     return 0;
 }
-

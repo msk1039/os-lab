@@ -25,6 +25,7 @@ Detailed example:
 int absVal(int x) { return x < 0 ? -x : x; }
 
 void sort(int a[], int n) {
+    /* Keep requests sorted so circular traversal is straightforward. */
     for (int i = 0; i < n - 1; i++)
         for (int j = 0; j < n - i - 1; j++)
             if (a[j] > a[j + 1]) {
@@ -33,6 +34,7 @@ void sort(int a[], int n) {
 }
 
 int main(void) {
+    /* `split` marks transition from left-of-head to right-of-head requests. */
     int n, head, current, q[MAX], total = 0;
 
     printf("Enter number of requests (at least 15): ");
@@ -53,12 +55,14 @@ int main(void) {
 
     current = head;
     printf("\nCurrent\tNext\tSeek\n");
+    /* First pass: serve requests to the right of head. */
     for (int i = split; i < n; i++) {
         int seek = absVal(q[i] - current);
         total += seek;
         printf("%d\t%d\t%d\n", current, q[i], seek);
         current = q[i];
     }
+    /* Circular jump to smallest request side and continue in ascending order. */
     for (int i = 0; i < split; i++) {
         int seek = absVal(q[i] - current);
         total += seek;
@@ -70,4 +74,3 @@ int main(void) {
     printf("Average seek       : %.2f\n", (float)total / n);
     return 0;
 }
-

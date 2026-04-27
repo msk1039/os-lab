@@ -13,5 +13,5 @@ compile and run the same logically correct program.
 ============================================================
 */
 
+/* Reuse chit02 implementation so repeated question stays behavior-identical. */
 #include "chit02_fork_sort_processes.c"
-

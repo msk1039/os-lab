@@ -23,6 +23,7 @@ Detailed example:
 #define MAX 30
 
 int main(void) {
+    /* done[] marks processes already completed in previous iterations. */
     int n, at[MAX], bt[MAX], st[MAX], ct[MAX], wt[MAX], tat[MAX], done[MAX] = {0};
     int time = 0, completed = 0;
 
@@ -34,9 +35,11 @@ int main(void) {
         scanf("%d%d", &at[i], &bt[i]);
     }
 
+    /* Repeat selecting shortest available job until all jobs are done. */
     while (completed < n) {
         int p = -1, best = 999999;
 
+        /* Candidate set: arrived and unfinished processes only. */
         for (int i = 0; i < n; i++) {
             if (!done[i] && at[i] <= time && bt[i] < best) {
                 best = bt[i];
@@ -44,11 +47,13 @@ int main(void) {
             }
         }
 
+        /* If no job is ready at this time, advance to next time unit. */
         if (p == -1) {
             time++;
             continue;
         }
 
+        /* Non-preemptive execution: selected job runs until completion. */
         st[p] = time;
         ct[p] = time + bt[p];
         tat[p] = ct[p] - at[p];
@@ -65,4 +70,3 @@ int main(void) {
 
     return 0;
 }
-

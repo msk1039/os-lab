@@ -27,6 +27,7 @@ int absVal(int x) {
 }
 
 int main(void) {
+    /* done[] marks request indices already serviced by the head. */
     int n, head, current, q[MAX], done[MAX] = {0}, total = 0;
 
     printf("Enter number of requests (at least 15): ");
@@ -43,9 +44,11 @@ int main(void) {
 
     current = head;
     printf("\nCurrent\tNext\tSeek\n");
+    /* Each iteration services one nearest pending request. */
     for (int count = 0; count < n; count++) {
         int pos = -1, best = 999999;
 
+        /* Find pending request with minimum seek distance from current head. */
         for (int i = 0; i < n; i++) {
             if (!done[i] && absVal(q[i] - current) < best) {
                 best = absVal(q[i] - current);
@@ -53,6 +56,7 @@ int main(void) {
             }
         }
 
+        /* Commit selected request and update head location. */
         done[pos] = 1;
         total += best;
         printf("%d\t%d\t%d\n", current, q[pos], best);
@@ -63,4 +67,3 @@ int main(void) {
     printf("Average seek       : %.2f\n", (float)total / n);
     return 0;
 }
-

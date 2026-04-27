@@ -17,21 +17,28 @@
 ###############################################################################
 
 FILE="students.txt"
+# Create the storage file once if it does not already exist.
+# `touch` is safe even when the file already exists.
 touch "$FILE"
 
 create_record() {
+    # Ask for both key (roll) and value (name).
     read -p "Enter roll number: " roll
     read -p "Enter student name: " name
 
+    # Check if this roll number already exists as a line prefix.
+    # Record format is: roll|name
     if grep -q "^$roll|" "$FILE"; then
         echo "Record already exists."
     else
+        # Append new record to the file.
         echo "$roll|$name" >> "$FILE"
         echo "Record added."
     fi
 }
 
 read_records() {
+    # `-s` checks that file exists and is not empty.
     if [ ! -s "$FILE" ]; then
         echo "No records found."
         return
@@ -39,17 +46,23 @@ read_records() {
 
     echo "Roll Number | Student Name"
     echo "--------------------------"
+    # Read each line by splitting using `|` delimiter.
     while IFS="|" read -r roll name; do
         echo "$roll | $name"
     done < "$FILE"
 }
 
 update_record() {
+    # Roll number is treated as stable ID.
     read -p "Enter roll number to update: " roll
 
     if grep -q "^$roll|" "$FILE"; then
         read -p "Enter new student name: " name
+
+        # Keep all lines except target roll in a temporary file.
         grep -v "^$roll|" "$FILE" > temp.txt
+
+        # Add updated record and atomically replace original file.
         echo "$roll|$name" >> temp.txt
         mv temp.txt "$FILE"
         echo "Record updated."
@@ -62,6 +75,7 @@ delete_record() {
     read -p "Enter roll number to delete: " roll
 
     if grep -q "^$roll|" "$FILE"; then
+        # Remove matching record and rewrite file without it.
         grep -v "^$roll|" "$FILE" > temp.txt
         mv temp.txt "$FILE"
         echo "Record deleted."
@@ -71,6 +85,7 @@ delete_record() {
 }
 
 while true; do
+    # Infinite menu loop; exits only when user selects option 5.
     echo
     echo "1. Create"
     echo "2. Read"
@@ -79,6 +94,7 @@ while true; do
     echo "5. Exit"
     read -p "Enter choice: " choice
 
+    # Route control to the selected CRUD operation.
     case "$choice" in
         1) create_record ;;
         2) read_records ;;
@@ -88,4 +104,3 @@ while true; do
         *) echo "Invalid choice." ;;
     esac
 done
-

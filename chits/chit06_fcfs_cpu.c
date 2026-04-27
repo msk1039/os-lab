@@ -23,6 +23,7 @@ Detailed example:
 #define MAX 30
 
 int main(void) {
+    /* pid[] lets us keep original process ID even after sorting by arrival. */
     int n, at[MAX], bt[MAX], pid[MAX], st[MAX], ct[MAX], wt[MAX], tat[MAX];
     int time = 0;
 
@@ -35,6 +36,7 @@ int main(void) {
         scanf("%d%d", &at[i], &bt[i]);
     }
 
+    /* Sort by arrival time because FCFS always respects arrival order. */
     for (int i = 0; i < n - 1; i++) {
         for (int j = 0; j < n - i - 1; j++) {
             if (at[j] > at[j + 1]) {
@@ -46,8 +48,12 @@ int main(void) {
         }
     }
 
+    /* Compute schedule timeline from left to right. */
     for (int i = 0; i < n; i++) {
+        /* If next process has not arrived yet, CPU stays idle until arrival. */
         if (time < at[i]) time = at[i];
+
+        /* Standard schedule metrics. */
         st[i] = time;
         ct[i] = time + bt[i];
         tat[i] = ct[i] - at[i];
@@ -62,4 +68,3 @@ int main(void) {
 
     return 0;
 }
-

@@ -24,6 +24,7 @@ Detailed example:
 #define MAX 30
 
 int main(void) {
+    /* All process attributes are maintained in parallel arrays by index. */
     int n, at[MAX], bt[MAX], rem[MAX], st[MAX], ct[MAX], wt[MAX], tat[MAX];
     int started[MAX] = {0}, done[MAX] = {0};
     int time = 0, completed = 0;
@@ -38,9 +39,11 @@ int main(void) {
         st[i] = -1;
     }
 
+    /* One-step CPU simulation to allow switching process every unit time. */
     while (completed < n) {
         int p = -1, shortest = 999999;
 
+        /* Choose arrived process with minimum remaining execution time. */
         for (int i = 0; i < n; i++) {
             if (!done[i] && at[i] <= time && rem[i] < shortest) {
                 shortest = rem[i];
@@ -48,6 +51,7 @@ int main(void) {
             }
         }
 
+        /* If no process has arrived yet, advance time without execution. */
         if (p == -1) {
             time++;
             continue;
@@ -58,10 +62,12 @@ int main(void) {
             started[p] = 1;
         }
 
+        /* Execute selected process for one time unit only. */
         rem[p]--;
         time++;
 
         if (rem[p] == 0) {
+            /* Mark completion and freeze completion time for metrics. */
             done[p] = 1;
             ct[p] = time;
             completed++;
@@ -70,6 +76,7 @@ int main(void) {
 
     printf("\nPID\tAT\tBT\tST\tCT\tWT\tTAT\n");
     for (int i = 0; i < n; i++) {
+        /* Turnaround and waiting are derived from completion values. */
         tat[i] = ct[i] - at[i];
         wt[i] = tat[i] - bt[i];
         printf("P%d\t%d\t%d\t%d\t%d\t%d\t%d\n", i + 1, at[i], bt[i], st[i], ct[i], wt[i], tat[i]);
@@ -77,4 +84,3 @@ int main(void) {
 
     return 0;
 }
-

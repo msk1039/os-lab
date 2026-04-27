@@ -24,6 +24,7 @@ Detailed example:
 int absVal(int x) { return x < 0 ? -x : x; }
 
 void sort(int a[], int n) {
+    /* Sorting allows linear sweep in SCAN direction. */
     for (int i = 0; i < n - 1; i++)
         for (int j = 0; j < n - i - 1; j++)
             if (a[j] > a[j + 1]) {
@@ -32,6 +33,7 @@ void sort(int a[], int n) {
 }
 
 int main(void) {
+    /* diskSize is required to model travel till physical end cylinder. */
     int n, head, diskSize, current, q[MAX], total = 0;
 
     printf("Enter number of requests (at least 15): ");
@@ -50,10 +52,12 @@ int main(void) {
 
     sort(q, n);
     int split = 0;
+    /* Requests [0..split-1] are left of head; [split..n-1] are right side. */
     while (split < n && q[split] < head) split++;
 
     current = head;
     printf("\nCurrent\tNext\tSeek\n");
+    /* Sweep right servicing all right-side requests first. */
     for (int i = split; i < n; i++) {
         int seek = absVal(q[i] - current);
         total += seek;
@@ -61,11 +65,13 @@ int main(void) {
         current = q[i];
     }
 
+    /* SCAN must touch end cylinder before reversing direction. */
     int end = diskSize - 1;
     total += absVal(end - current);
     printf("%d\t%d\t%d\n", current, end, absVal(end - current));
     current = end;
 
+    /* Reverse sweep to service remaining left-side requests. */
     for (int i = split - 1; i >= 0; i--) {
         int seek = absVal(q[i] - current);
         total += seek;
@@ -77,4 +83,3 @@ int main(void) {
     printf("Average seek       : %.2f\n", (float)total / n);
     return 0;
 }
-

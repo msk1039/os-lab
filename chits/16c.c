@@ -1,4 +1,22 @@
+/*
+Problem Statement (Chit 16):
+Implement the C/C++ program for CLOOK disk scheduling with a given request queue (at least 15 requests) and initial disk head position. Use basic programming constructs only; do not use advanced inbuilt library functions
+*/
 
+/*
+============================================================
+C-LOOK Disk Scheduling
+------------------------------------------------------------
+Idea:
+- Circular version of LOOK.
+- Move right and serve requests until highest request.
+- Jump to lowest request and continue right.
+
+Detailed example:
+- Head=50, sorted: 11 34 41 60 79 92
+- Serve 60,79,92 then jump to 11 and serve 34,41.
+============================================================
+*/
 
 #include <stdio.h>
 
@@ -7,7 +25,7 @@
 int absVal(int x) { return x < 0 ? -x : x; }
 
 void sort(int a[], int n) {
-
+    /* Keep requests sorted so circular traversal is straightforward. */
     for (int i = 0; i < n - 1; i++)
         for (int j = 0; j < n - i - 1; j++)
             if (a[j] > a[j + 1]) {
@@ -16,7 +34,7 @@ void sort(int a[], int n) {
 }
 
 int main(void) {
-
+    /* `split` marks transition from left-of-head to right-of-head requests. */
     int n, head, current, q[MAX], total = 0;
 
     printf("Enter number of requests (at least 15): ");
@@ -37,14 +55,14 @@ int main(void) {
 
     current = head;
     printf("\nCurrent\tNext\tSeek\n");
-
+    /* First pass: serve requests to the right of head. */
     for (int i = split; i < n; i++) {
         int seek = absVal(q[i] - current);
         total += seek;
         printf("%d\t%d\t%d\n", current, q[i], seek);
         current = q[i];
     }
-
+    /* Circular jump to smallest request side and continue in ascending order. */
     for (int i = 0; i < split; i++) {
         int seek = absVal(q[i] - current);
         total += seek;

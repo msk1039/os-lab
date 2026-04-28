@@ -1,4 +1,23 @@
+/*
+Problem Statement (Chit 3):
+Implement the C/C++ program to simulate CPU Scheduling Algorithm round robin (preemptive) with different arrival times. Use basic programming constructs only; do not use advanced inbuilt library functions
+*/
 
+/*
+============================================================
+Round Robin CPU Scheduling
+------------------------------------------------------------
+Idea:
+- Each process receives CPU for a fixed time quantum.
+- If not complete, it goes back to the ready queue.
+- Different arrival times are handled by adding arrived processes to queue.
+
+Detailed example:
+- Quantum=2, P1(AT=0,BT=5), P2(AT=1,BT=3)
+- P1 runs 0-2, P2 runs 2-4, P1 runs 4-6,
+  P2 runs 6-7, P1 runs 7-8.
+============================================================
+*/
 
 #include <stdio.h>
 
@@ -7,11 +26,11 @@
 
 int main(void) {
     int n, quantum;
-
+    /* Per-process data arrays. Index i means process P(i+1). */
     int at[MAX], bt[MAX], rem[MAX], st[MAX], ct[MAX], wt[MAX], tat[MAX];
-
+    /* started[] tracks first CPU allocation; inQueue[] prevents duplicate enqueue. */
     int started[MAX] = {0}, inQueue[MAX] = {0};
-
+    /* Manual queue using front/rear indexes. */
     int q[QMAX], front = 0, rear = 0;
     int time = 0, completed = 0;
 
@@ -27,9 +46,9 @@ int main(void) {
         st[i] = -1;
     }
 
-
+    /* Continue simulation until all processes complete. */
     while (completed < n) {
-
+        /* Add all newly arrived ready processes at current time. */
         for (int i = 0; i < n; i++) {
             if (!inQueue[i] && rem[i] > 0 && at[i] <= time) {
                 q[rear++] = i;
@@ -37,13 +56,13 @@ int main(void) {
             }
         }
 
-
+        /* If no ready process, CPU stays idle for one time unit. */
         if (front == rear) {
             time++;
             continue;
         }
 
-
+        /* Pick next process in round-robin order (queue front). */
         int p = q[front++];
         inQueue[p] = 0;
 
@@ -52,12 +71,12 @@ int main(void) {
             started[p] = 1;
         }
 
-
+        /* Process can run for at most one quantum in each turn. */
         int run = (rem[p] < quantum) ? rem[p] : quantum;
         rem[p] -= run;
         time += run;
 
-
+        /* During execution, other processes may arrive; enqueue them now. */
         for (int i = 0; i < n; i++) {
             if (!inQueue[i] && rem[i] > 0 && at[i] <= time && i != p) {
                 q[rear++] = i;
@@ -66,11 +85,11 @@ int main(void) {
         }
 
         if (rem[p] > 0) {
-
+            /* Not finished: put it back at queue tail for next rounds. */
             q[rear++] = p;
             inQueue[p] = 1;
         } else {
-
+            /* Finished process gets completion timestamp once. */
             ct[p] = time;
             completed++;
         }
@@ -78,7 +97,7 @@ int main(void) {
 
     printf("\nPID\tAT\tBT\tST\tCT\tWT\tTAT\n");
     for (int i = 0; i < n; i++) {
-
+        /* Standard metric formulas. */
         tat[i] = ct[i] - at[i];
         wt[i] = tat[i] - bt[i];
         printf("P%d\t%d\t%d\t%d\t%d\t%d\t%d\n", i + 1, at[i], bt[i], st[i], ct[i], wt[i], tat[i]);

@@ -1,21 +1,4 @@
-/*
-Problem Statement (Chit 18):
-Implement the C/C++ program for CSCAN disk scheduling with a given request queue (at least 15 requests) and initial disk head position. Use basic programming constructs only; do not use advanced inbuilt library functions
-*/
 
-/*
-============================================================
-C-SCAN Disk Scheduling
-------------------------------------------------------------
-Idea:
-- Move in one direction only.
-- After reaching disk end, jump to start and continue.
-
-Detailed example:
-- Disk range 0-199, head=50, moving right.
-- Serve right requests, go to 199, jump to 0, serve remaining requests.
-============================================================
-*/
 
 #include <stdio.h>
 
@@ -24,7 +7,7 @@ Detailed example:
 int absVal(int x) { return x < 0 ? -x : x; }
 
 void sort(int a[], int n) {
-    /* Sort requests to support monotonic rightward servicing. */
+
     for (int i = 0; i < n - 1; i++)
         for (int j = 0; j < n - i - 1; j++)
             if (a[j] > a[j + 1]) {
@@ -33,7 +16,7 @@ void sort(int a[], int n) {
 }
 
 int main(void) {
-    /* C-SCAN needs disk size to account for end-to-start wrap movement. */
+
     int n, head, diskSize, current, q[MAX], total = 0;
 
     printf("Enter number of requests (at least 15): ");
@@ -52,12 +35,12 @@ int main(void) {
 
     sort(q, n);
     int split = 0;
-    /* `split` is first request not smaller than initial head. */
+
     while (split < n && q[split] < head) split++;
 
     current = head;
     printf("\nCurrent\tNext\tSeek\n");
-    /* Service right side first, ascending order. */
+
     for (int i = split; i < n; i++) {
         int seek = absVal(q[i] - current);
         total += seek;
@@ -65,18 +48,18 @@ int main(void) {
         current = q[i];
     }
 
-    /* Move to disk end before circular jump. */
+
     int end = diskSize - 1;
     total += absVal(end - current);
     printf("%d\t%d\t%d\n", current, end, absVal(end - current));
     current = end;
 
-    /* Circular jump from end cylinder to 0 (counted in seek distance). */
+
     total += current;
     printf("%d\t%d\t%d\n", current, 0, current);
     current = 0;
 
-    /* Continue servicing lower requests from start in ascending order. */
+
     for (int i = 0; i < split; i++) {
         int seek = absVal(q[i] - current);
         total += seek;
